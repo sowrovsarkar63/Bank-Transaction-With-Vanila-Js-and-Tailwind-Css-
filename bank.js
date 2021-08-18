@@ -1,57 +1,69 @@
-// handle diposit button even
+// get input value
 
+function getInputValue(inputId) {
+  // debugger;
+  const inputField = document.getElementById(inputId);
+  const inputAmountText = inputField.value;
+  const amountValue = parseFloat(inputAmountText);
+  // clear input field
+  inputField.value = "";
+  return amountValue;
+}
+
+function updateTotalField(totalFieldId, amount) {
+  // debugger;
+  const totalElement = document.getElementById(totalFieldId);
+  const totalText = totalElement.innerText;
+  const previousTotal = parseFloat(totalText);
+  totalElement.innerText = previousTotal + amount;
+}
+
+function getCurrentBalance() {
+  const balanceTotal = document.getElementById("total-balance");
+  const balanceTotalText = balanceTotal.innerText;
+  const previousBalanceTotal = parseFloat(balanceTotalText);
+  return previousBalanceTotal;
+}
+
+function updateBalance(amount, isAdd) {
+  const balanceTotal = document.getElementById("total-balance");
+  /*
+   const balanceTotalText = balanceTotal.innerText;
+  const previousBalanceTotal = parseFloat(balanceTotalText); */
+  const previousBalanceTotal = getCurrentBalance();
+  if (isAdd == true) {
+    balanceTotal.innerText = previousBalanceTotal + amount;
+  } else {
+    balanceTotal.innerText = previousBalanceTotal - amount;
+  }
+}
+
+// update input value
 document
   .getElementById("deposit-button")
   .addEventListener("click", function () {
-    // get amount of diposit
-    const depositInput = document.getElementById("deposit-input");
-    const depositAmountText = depositInput.value;
-    const newDepositAmount = parseFloat(depositAmountText);
-
-    /*update Deposit total*/
-    const depositTotal = document.getElementById("total-deposit");
-    const depositTotalText = depositTotal.innerText;
-    const prevDipositAmount = parseFloat(depositTotalText);
-    // calculate
-    const newDepositTotal = prevDipositAmount + newDepositAmount;
-    depositTotal.innerText = newDepositTotal;
-    /* update account balance */
-
-    const balanceTotal = document.getElementById("total-balance");
-    const balanceTotalText = balanceTotal.innerText;
-    const prevBalanceTotal = parseFloat(balanceTotalText);
-    const newBalanceTotal = prevBalanceTotal + newDepositAmount;
-    balanceTotal.innerText = newBalanceTotal;
-
-    // clear
-    depositInput.value = "";
+    // get and update deposit amount
+    const depositAmount = getInputValue("deposit-input");
+    if (depositAmount > 0) {
+      updateTotalField("total-deposit", depositAmount);
+      updateBalance(depositAmount, true);
+    }
   });
-
-//   Handle withdraw even handlebar
 
 document
   .getElementById("withdraw-button")
   .addEventListener("click", function () {
     //   get withdraw
-    const withdrawInput = document.getElementById("withdraw-input");
-    const withdrawAmountText = withdrawInput.value;
-    const withdrawAmount = parseFloat(withdrawAmountText);
 
-    // console.log(prevWithdrawAmount);
-    // set withdraw total
-
-    const withdrawTotal = document.getElementById("total-withdraw");
-    const withdrawTotalText = withdrawTotal.innerText;
-    const prevwithdrawTotal = parseFloat(withdrawTotalText);
-    const newWithdrawTotal = prevwithdrawTotal + withdrawAmount;
-    withdrawTotal.innerText = newWithdrawTotal;
-
-    // update main balance
-    const totalBalanceInput = document.getElementById("total-balance");
-    const totalBalanceText = totalBalanceInput.innerText;
-    const totalBalance = parseFloat(totalBalanceText);
-    const newTotalBalance = totalBalance - withdrawAmount;
-    totalBalanceInput.innerText = newTotalBalance;
-
-    withdrawInput.value = "";
+    const withdrawAmount = getInputValue("withdraw-input");
+    const currentBalance = getCurrentBalance();
+    if (withdrawAmount > 0 && withdrawAmount < currentBalance) {
+      updateTotalField("total-withdraw", withdrawAmount);
+      updateBalance(withdrawAmount, false);
+    }
+    if (withdrawAmount > currentBalance) {
+      console.log(
+        "You can not withdraw more than what you have in your account"
+      );
+    }
   });
